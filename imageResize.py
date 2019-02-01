@@ -25,3 +25,8 @@ for elem in list2:
         for j in range(np.size(result, 1)):
             result[i][j] = 0 if result[i][j] == 0 else 255
     cv2.imwrite(dst2+elem, result)
+
+if os.path.exists("Resized/Mask/.directory"):
+        os.remove("Resized/Mask/.directory")
+if os.path.exists("Resized/Profile/.directory"):
+        os.remove("Resized/Profile/.directory")

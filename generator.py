@@ -2,6 +2,7 @@ import numpy as np
 import cv2
 import sys
 import os
+import json
 import random
 import configparser
 import shutil
@@ -17,13 +18,14 @@ config.read("config.ini")
 CELLSIZE = int(config["SETTINGS"]["CELLSIZE"])
 OUT_SIZE = [int(config["SETTINGS"]["OUT_SIZEY"]), int(config["SETTINGS"]["OUT_SIZEX"])]
 OUT_NAME = config["SETTINGS"]["OUT_NAME"]
-MODE =  int(config["SETTINGS"]["MODE"])
+MODE = int(config["SETTINGS"]["MODE"])
 N = int(config["SETTINGS"]["N"])
 DIR_MASK = config["SETTINGS"]["DIR_MASK"]
 DIR_PROF = config["SETTINGS"]["DIR_PROF"]
 DIR_OUT = config["SETTINGS"]["DIR_OUT"]
 DISTR = int(config["SETTINGS"]["DISTR"])
 THR = int(config["SETTINGS"]["THR"])
+JSON_NAME = config["SETTINGS"]["JSON_NAME"]
 
 FGRID_SIZE = [OUT_SIZE[0] / CELLSIZE, OUT_SIZE[1] / CELLSIZE]
 NAME = sys.argv[1]
@@ -39,6 +41,9 @@ composite = np.zeros((OUT_SIZE[0], OUT_SIZE[1]))
 if not os.path.exists(DIR_OUT+NAME):
     os.makedirs(DIR_OUT+NAME)
 
+jsonList = []
+
+#legge i profili/mask in input
 lista = os.listdir(DIR_MASK)
 count = {}
 for name in lista:
@@ -46,11 +51,10 @@ for name in lista:
 
 for n in range(N):
     #seleziona un profilo random
-    path = lista[random.randint(0, len(lista))-1]
+    path = lista[random.randint(0, len(lista)-1)]
 
     mask = cv2.cvtColor(cv2.imread(DIR_MASK+path), cv2.COLOR_BGR2GRAY)
     profile = cv2.cvtColor(cv2.imread(DIR_PROF+path), cv2.COLOR_BGR2GRAY)
-
     mask, profile, grid = randomize(mask, profile, CELLSIZE, MODE, THR)
 
     IMG_SIZE = [np.size(mask, 0), np.size(mask, 1)]
@@ -96,21 +100,32 @@ for n in range(N):
             break
 
     elif(DISTR == 1): #distribuzione margine inferiore
-        valid = True
-        y = random.randint(0, FGRID_SIZE[1] - GRID_SIZE[1])
-        for x in range(FGRID_SIZE[0] - GRID_SIZE[0]):
-            for i in range(GRID_SIZE[0]):
-                for j in range(GRID_SIZE[1]): #se un bordo si sovrappone ad una figura
-                    if grid[i][j] == 255 and fullgrid[x+i][y+j] == 255: #collisione
-                        valid = False
+        #y = random.randint(0, FGRID_SIZE[1] - GRID_SIZE[1])
+        for x in range(FGRID_SIZE[0] - GRID_SIZE[0]-1, 0, -1):
+            #print "check y:", y
+            for y in range(FGRID_SIZE[1] - GRID_SIZE[1]):
+                #print "check x: ", x
+                valid = True
+                for i in range(GRID_SIZE[0]):
+                    for j in range(GRID_SIZE[1]): #se un bordo si sovrappone ad una figura
+                        if grid[i][j] == 255 and fullgrid[x+i][y+j] == 255: #collisione
+                            valid = False
+                            break
+                    if valid is False:
                         break
-                if valid is False:
+                if valid:
                     break
-            if valid is False:
+            if valid:
                 break
-        if valid is False and y == 0: #raggiunto il limite dell'immagine
+        if valid is False: #raggiunto il limite dell'immagine
             break
-        y = y if y == FGRID_SIZE[1] - GRID_SIZE[1] -1 else y-1 #ultima posizione valida
+        #y = y if y == FGRID_SIZE[1] - GRID_SIZE[1] -1 else y-1 #ultima posizione valida
+
+    #aggiorna json
+    jsonList.append({"category" : path.split(".")[0],
+                     "confidence" : str(1.0),
+                     "bbox" : [str(float(y)*CELLSIZE), str(float(x)*CELLSIZE), str(float(IMG_SIZE[1])), str(float(IMG_SIZE[0]))]})
+
     #aggiorna fullgrid
     for i in range(GRID_SIZE[0]):
         for j in range(GRID_SIZE[1]):
@@ -137,3 +152,6 @@ for n in range(N):
 #cv2.imwrite("Output/"+NAME+"/fullgrid.png", fullgrid)
 
 cv2.imwrite(DIR_OUT+NAME+"/"+OUT_NAME, composite)
+
+with open(DIR_OUT+NAME+"/"+JSON_NAME, "w") as out:
+        json.dump(jsonList, out)

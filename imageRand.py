@@ -11,6 +11,9 @@ def randomize(img1, img2, CELLSIZE, MODE, THR):
     degree = 0
     #Rapporto dimensioni
     scale = 1
+    
+    dst1 = img1
+    dst2 = img2
 
     if(MODE == 0): #rotazione random
         degree = random.randint(0, 360)
@@ -22,8 +25,18 @@ def randomize(img1, img2, CELLSIZE, MODE, THR):
 
         dst1, dst2 = cut(dst1, dst2, CELLSIZE)
 
-    elif(MODE == 1):
-        pass
+    elif(MODE == 1): #rotazione orizzontale
+        dst1, dst2 = cut(img1, img2, CELLSIZE)
+        if np.size(dst1, 0) > np.size(dst1, 1):
+            degree = random.randint(0, 11)+85
+        else:
+            degree = random.randint(0, 11)+355
+        
+        M = cv2.getRotationMatrix2D((cols/2,rows/2),degree,scale)
+        dst1 = cv2.warpAffine(img1,M,(cols,rows))
+        dst2 = cv2.warpAffine(img2,M,(cols,rows))
+
+        dst1, dst2 = cut(dst1, dst2, CELLSIZE)
 
     #Genera un valore casuale multiplo di 10 per ridimensionare le immagini
     #size = random.randint(-10,10) * 10
