@@ -97,8 +97,8 @@ for n in range(N):
 
     elif(DISTR == 1): #distribuzione margine inferiore
         valid = True
-        x = random.randint(0, FGRID_SIZE[0] - GRID_SIZE[0])
-        for y in range(FGRID_SIZE[1] - GRID_SIZE[1]):
+        y = random.randint(0, FGRID_SIZE[1] - GRID_SIZE[1])
+        for x in range(FGRID_SIZE[0] - GRID_SIZE[0]):
             for i in range(GRID_SIZE[0]):
                 for j in range(GRID_SIZE[1]): #se un bordo si sovrappone ad una figura
                     if grid[i][j] == 255 and fullgrid[x+i][y+j] == 255: #collisione
