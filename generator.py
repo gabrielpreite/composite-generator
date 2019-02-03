@@ -8,6 +8,7 @@ import configparser
 import shutil
 from imageGrid import genGrid
 from imageRand import randomize
+from profile2Coco import profiles2Coco
 
 #python generator.py <nome directory> <numero immagini>
 
@@ -147,7 +148,7 @@ for image_num in range(NUMBER):
         tmp = np.zeros((OUT_SIZE[0], OUT_SIZE[1]))
         for i in range(IMG_SIZE[0]):
             for j in range(IMG_SIZE[1]):
-                tmp[x*CELLSIZE + i][y*CELLSIZE + j] = tmp[x*CELLSIZE + i][y*CELLSIZE + j] if profile[i][j] == 0 else profile[i][j]
+                tmp[x*CELLSIZE + i][y*CELLSIZE + j] = tmp[x*CELLSIZE + i][y*CELLSIZE + j] if mask[i][j] == 0 else mask[i][j]
         count[path] += 1
         cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+path.split(".")[0]+"_"+str(count[path]).zfill(6)+".png", tmp)
 
@@ -161,4 +162,6 @@ for image_num in range(NUMBER):
     cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+OUT_NAME, composite)
 
     with open(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+JSON_NAME, "w") as out:
-            json.dump(jsonList, out)
+        json.dump(jsonList, out)
+
+    profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
