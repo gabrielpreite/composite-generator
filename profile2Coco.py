@@ -57,8 +57,8 @@ def get_red_to_binary(image_name):
 
 
 
-def filter_for_jpeg(root, files):
-    file_types = ['*.jpg']
+def filter_for_png(root, files):
+    file_types = ['*.png']
     file_types = r'|'.join([fnmatch.translate(x) for x in file_types])
     files = [os.path.join(root, f) for f in files]
     #print files
@@ -87,10 +87,10 @@ def filter_for_annotations(root, files, image_filename):
 
     return files
 
-def FindAnnotationFiles(folderOld):
+"""def FindAnnotationFiles(folderOld):
     for root, _, files in os.walk(folderOld):
         image_files = filter_for_png(root, files)
-    return image_files
+    return image_files"""
 
 #def profiles2Coco(CatDir, WorkingDir):
 def profiles2Coco(WorkingDir, OUT_NAME):
@@ -131,15 +131,17 @@ def profiles2Coco(WorkingDir, OUT_NAME):
 
     # filter for jpeg images
     for root, _, files in os.walk(IMAGE_DIR):
-        image_files = filter_for_jpeg(root, files)
-
+        files.remove("composite.png")
+        image_files = filter_for_png(root, files)
+        #print "x"
+        print "image_files: ", image_files
         # go through each image
         for image_filename in image_files:
             image = Image.open(image_filename)
             image_info = pycococreatortools.create_image_info(
                 image_id, os.path.basename(image_filename), image.size)
             coco_output["images"].append(image_info)
-
+            #print "y"
             # filter for associated png annotations
             for root, _, files in os.walk(ANNOTATION_DIR):
                 annotation_files = filter_for_annotations(root, files, image_filename)
@@ -164,7 +166,9 @@ def profiles2Coco(WorkingDir, OUT_NAME):
                         segmentation_id, image_id, category_info, binary_mask,
                         image.size, tolerance=2)
 
-                    print annotation_info
+                    if annotation_info is None:
+                        print "asd"
+                    print "annotation: \n", annotation_info
 
                     if annotation_info is not None:
                         coco_output["annotations"].append(annotation_info)
@@ -179,12 +183,12 @@ def profiles2Coco(WorkingDir, OUT_NAME):
 
     #print coco_output
 
-def profiles2CocoRealData(CatDir, WorkingDir):
+"""def profiles2CocoRealData(CatDir, WorkingDir):
     IMAGE_DIR=WorkingDir+"/train/dataset_train/" 
     print IMAGE_DIR
     ANNOTATION_DIR=WorkingDir+"/train/annotations_train/" 
     print ANNOTATION_DIR
-    CATEGORIES, profiles=CreateCategories(CatDir)
+    CATEGORIES, profiles=CreateCategories(CatDir, )
     INFO = {
         "description": WorkingDir,
         "url": "...",
@@ -261,14 +265,15 @@ def profiles2CocoRealData(CatDir, WorkingDir):
     with open('{}/dataset_train.json'.format(WorkingDir), 'w') as output_json_file:
         json.dump(coco_output, output_json_file)
 
-    print coco_output
+    print coco_output"""
 
 
 
 def main():
+    pass
     #Categories for COCOSTYLE
     #WorkingDir="./repository/large/55/800/Group_0" 
-    print WorkingDir
+    #print WorkingDir
     #CATEGORIES, profiles=CreateCategories(WorkingDir)
     #print CATEGORIES
     #print profiles

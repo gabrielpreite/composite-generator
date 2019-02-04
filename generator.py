@@ -6,9 +6,8 @@ import json
 import random
 import configparser
 import shutil
-from imageGrid import genGrid
 from imageRand import randomize
-from profile2Coco import profiles2Coco
+from coco import genCoco
 
 #python generator.py <nome directory> <numero immagini>
 
@@ -27,6 +26,7 @@ DIR_OUT = config["SETTINGS"]["DIR_OUT"]
 DISTR = int(config["SETTINGS"]["DISTR"])
 THR = int(config["SETTINGS"]["THR"])
 JSON_NAME = config["SETTINGS"]["JSON_NAME"]
+COCO_NAME = config["SETTINGS"]["COCO_NAME"]
 
 FGRID_SIZE = [OUT_SIZE[0] / CELLSIZE, OUT_SIZE[1] / CELLSIZE]
 NAME = sys.argv[1]
@@ -70,7 +70,7 @@ for image_num in range(NUMBER):
 
         x = y = i = j = 0
 
-        if(DISTR == 0): #distribuzione accentrata
+        if(DISTR == 0): #distribuzione centrata
             found = False
             turn = 0
             maxturns = 1
@@ -164,4 +164,5 @@ for image_num in range(NUMBER):
     with open(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+JSON_NAME, "w") as out:
         json.dump(jsonList, out)
 
-    profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
+    #profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
+    genCoco((DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"), COCO_NAME, OUT_NAME, JSON_NAME)
