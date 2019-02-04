@@ -16,11 +16,16 @@ if __name__=='__main__':
         obj = json.loads(f.read())
     
     images, annotations = obj["images"], obj["annotations"]
-    classes = obj["categories"]
-    print classes
+    classes = obj["categories"][0]
+    #print "class ",len(classes)
+    #print "img ",len(images)
+    #print "anno ",len(annotations)
+    #print classes
     for img in images:
         anns = [ann for ann in annotations if ann["image_id"]==img["id"]]
         image_cv2 = cv2.imread(img["file_name"])
+        cv2.imshow('hey', image_cv2)
+        cv2.waitKey()
         #print img
         #print ann
         #print ann['bbox']
@@ -38,10 +43,12 @@ if __name__=='__main__':
 
           
            cv2.rectangle(image_cv2, (s[0], s[1]), (s[0]+s[2], s[1]+s[3]), (0,255,255), 8)
+           
            ProfileClass = classes[ann['category_id']]
           # ProfileClass = classes[ann['category_id']]
            print ProfileClass['name']
            #ProfileClass = unicodedata.normalize('NFKD',Profile).encode('ascii','ignore')
            cv2.putText(image_cv2, ProfileClass['name'], (s[0]+20, s[1]-20), cv2.FONT_HERSHEY_SIMPLEX, 3, (255, 255, 0), 5)
+        
         cv2.imshow('frame', image_cv2)
         cv2.waitKey()

@@ -11,27 +11,24 @@ import json
 import numpy as np
 from pycococreatortools import pycococreatortools
 
-def getCategories(imageList):
+def getCategories(DIR_MASK):
     catList = []
-    found = {}
     id = 0
-    for image in imageList:
+    for image in os.listdir(DIR_MASK):
         #print image
-        if image.split("_")[0] not in found:
-            catList.append(
-                {
-                    "supercategory" : "shape",
-                    "id" : id,
-                    "name" : image.split("_")[0]
-                }
-            )
-            id += 1
-            found[image.split("_")[0]] = True
+        catList.append(
+            {
+                "supercategory" : "shape",
+                "id" : id,
+                "name" : image.split(".")[0]
+            }
+        )
+        id += 1
     #print catList
     return catList
 
 
-def genCoco(DIR, COCO_NAME, OUT_NAME, JSON_NAME):
+def genCoco(DIR, COCO_NAME, OUT_NAME, JSON_NAME, DIR_MASK):
     coco_output ={
         "info": {
             "description": DIR,
@@ -53,45 +50,52 @@ def genCoco(DIR, COCO_NAME, OUT_NAME, JSON_NAME):
         "annotations": []
     }
 
-    imageList = []
-    imageList = os.listdir(DIR)
+    subdirList = []
+    subdirList = os.listdir(DIR)
 
-    imageList.remove(OUT_NAME)
-    imageList.remove(JSON_NAME)
-
-    catList = getCategories(imageList)
-    #print catList
+    catList = getCategories(DIR_MASK)
     coco_output["categories"].append(catList)
 
-    #print imageList
-    imageId = 0
+    compositeId = 0
     annotationId = 0
-    for image in imageList:
-        img = Image.open(DIR+image)
 
-        coco_output["images"].append( #images
-            pycococreatortools.create_image_info(
-                imageId,
-                os.path.basename(image),
-                img.size
+    for subDir in subdirList:
+        imageList = []
+        imageList = os.listdir(DIR+subDir)
+
+        composite = OUT_NAME.split(".")[0]+"_"+subDir+"."+OUT_NAME.split(".")[1]
+        i = Image.open(DIR+subDir+"/"+composite)
+        coco_output["images"].append( #adds composite
+                pycococreatortools.create_image_info(
+                    compositeId,
+                    os.path.basename(composite),
+                    i.size
+                )
             )
-        )
 
-        category_info = {
-            "id": next((cat for cat in catList if cat["name"] == image.split("_")[0]), None)["id"],
-            "is_crowd": 0
-        }
+        imageList.remove(composite)
+        imageList.remove(JSON_NAME.split(".")[0]+"_"+subDir+"."+JSON_NAME.split(".")[1])
 
-        binary_mask = np.asarray(img.convert("1")).astype(np.uint8)
+        #print imageList
+        for image in imageList:
+            img = Image.open(DIR+subDir+"/"+image)
 
-        annotation_info = pycococreatortools.create_annotation_info(
-            annotationId, imageId, category_info, binary_mask, img.size, tolerance = 2
-        )
+            category_info = {
+                "id": next((cat for cat in catList if cat["name"] == image.split("_")[0]), None)["id"],
+                "is_crowd": 0
+            }
 
-        coco_output["annotations"].append(annotation_info)
+            binary_mask = np.asarray(img.convert("1")).astype(np.uint8)
 
-        imageId += 1
-        annotationId += 1
+            annotation_info = pycococreatortools.create_annotation_info(
+                annotationId, compositeId, category_info, binary_mask, img.size, tolerance = 2
+            )
+
+            coco_output["annotations"].append(annotation_info)
+
+            annotationId += 1
+        
+        compositeId += 1
 
     with open(DIR+COCO_NAME, "w") as out:
         json.dump(coco_output, out)

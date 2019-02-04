@@ -158,11 +158,11 @@ for image_num in range(NUMBER):
         #for j in range(FGRID_SIZE[1]):
             #fullgrid[i][j] = 255 if fullgrid[i][j] == 1 else 0
     #cv2.imwrite("Output/"+NAME+"/fullgrid.png", fullgrid)
+    
+    cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+OUT_NAME.split(".")[0]+"_"+str(image_num).zfill(6)+"."+OUT_NAME.split(".")[1], composite)
 
-    cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+OUT_NAME, composite)
-
-    with open(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+JSON_NAME, "w") as out:
+    with open(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+JSON_NAME.split(".")[0]+"_"+str(image_num).zfill(6)+"."+JSON_NAME.split(".")[1], "w") as out:
         json.dump(jsonList, out)
 
     #profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
-    genCoco((DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"), COCO_NAME, OUT_NAME, JSON_NAME)
+genCoco((DIR_OUT+NAME+"/"), COCO_NAME, OUT_NAME, JSON_NAME, DIR_MASK)
