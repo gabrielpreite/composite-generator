@@ -5,7 +5,7 @@ import configparser
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-CELLSIZE = config["SETTINGS"]["CELLSIZE"]
+CELLSIZE = int(config["SETTINGS"]["CELLSIZE"])
 
 def genGrid(img):
     ROWS = img.shape[0] / CELLSIZE

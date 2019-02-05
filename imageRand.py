@@ -8,9 +8,9 @@ from imageGrid import genGrid
 config = configparser.ConfigParser()
 config.read("config.ini")
 
-CELLSIZE = config["SETTINGS"]["CELLSIZE"]
-MOD = config["SETTINGS"]["MOD"]
-THR = config["sETTINGS"]["THR"]
+CELLSIZE = int(config["SETTINGS"]["CELLSIZE"])
+MOD = int(config["SETTINGS"]["MOD"])
+THR = int(config["SETTINGS"]["THR"])
 
 def randomize(img1, img2):
     #Numero di colonne e righe
