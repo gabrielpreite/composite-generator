@@ -47,11 +47,6 @@ def randomize(img1, img2):
 
         dst1, dst2 = cut(dst1, dst2)
 
-    #Genera un valore casuale multiplo di 10 per ridimensionare le immagini
-    #size = random.randint(-10,10) * 10
-    #dst1 = cv2.resize(dst1,((cols+size),(rows+size)))
-    #dst2 = cv2.resize(dst2,((cols+size),(rows+size)))
-
     #Aggiunge ad una lista le matrici e le restituisce
     grid = genGrid(dst1)
 

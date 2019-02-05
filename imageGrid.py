@@ -12,7 +12,7 @@ def genGrid(img):
     COLUMNS = img.shape[1] / CELLSIZE
 
     grid = np.zeros((ROWS, COLUMNS))
-
+    # genera una grid (w/CELLSIZE, h/CELLSIZE)
     for i in range(ROWS):
         for j in range(COLUMNS):
             maxval = 0

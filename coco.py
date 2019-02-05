@@ -15,6 +15,7 @@ JSON_NAME = config["SETTINGS"]["JSON_NAME"]
 DIR_MASK = config["SETTINGS"]["DIR_MASK"]
 
 def getCategories():
+    #crea lista di categorie
     catList = []
     catId = 0
     for image in os.listdir(DIR_MASK):
@@ -62,28 +63,27 @@ def genCoco(DIR):
     compositeId = 0
     annotationId = 0
 
-    for subDir in subdirList:
-        imageList = []
-        imageList = os.listdir(DIR+subDir)
-
+    for subDir in subdirList: #per ogni esecuzione
         composite = OUT_NAME.split(".")[0]+"_"+subDir+"."+OUT_NAME.split(".")[1]
         i = Image.open(DIR+subDir+"/"+composite)
-        coco_output["images"].append( #adds composite
+        coco_output["images"].append( # aggiunge l'immagine composita 
                 pycococreatortools.create_image_info(
                     compositeId,
                     os.path.basename(composite),
                     i.size
                 )
             )
-
+        
+        #ottiene le immagini singole (composita esclusa)
+        imageList = []
+        imageList = os.listdir(DIR+subDir)
         imageList.remove(composite)
         imageList.remove(JSON_NAME.split(".")[0]+"_"+subDir+"."+JSON_NAME.split(".")[1])
 
-        #print imageList
         for image in imageList:
             img = Image.open(DIR+subDir+"/"+image)
 
-            category_info = {
+            category_info = { # id categoria dell'immagine singola
                 "id": next((cat for cat in catList if cat["name"] == image.split("_")[0]), None)["id"],
                 "is_crowd": 0
             }

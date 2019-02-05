@@ -42,7 +42,9 @@ if not os.path.exists(DIR_OUT+NAME):
 
 for image_num in range(NUMBER):
 
+    #grid per il controllo delle collisioni
     fullgrid = np.zeros((FGRID_SIZE[0], FGRID_SIZE[1]))
+    #immagine finale
     composite = np.zeros((OUT_SIZE[0], OUT_SIZE[1]))
 
     #crea directory di output per l'immagine corrente
@@ -75,13 +77,11 @@ for image_num in range(NUMBER):
             turn = 0
             maxturns = 1
             direc = 0
+            #movimento a spirale partendo dal centro
             mask = [[-1, 0], [0, 1], [1, 0], [0, -1]]
             x = FGRID_SIZE[0]/2
             y = FGRID_SIZE[1]/2
             while(x > 0 and x < FGRID_SIZE[0] - GRID_SIZE[0] and y > 0 and y < FGRID_SIZE[1] - GRID_SIZE[1]):
-                #print "x: ",x
-                #print "y: ",y
-                #print ""
                 #controlla collisioni
                 invalid = False
                 for i in range(GRID_SIZE[0]):
@@ -144,7 +144,7 @@ for image_num in range(NUMBER):
             for j in range(IMG_SIZE[1]):
                 composite[x*CELLSIZE + i][y*CELLSIZE + j] = composite[x*CELLSIZE + i][y*CELLSIZE + j] if profile[i][j] == 0 else profile[i][j]
 
-        #crea immagine con layer singolo
+        #crea immagine con layer singolo e la salva
         tmp = np.zeros((OUT_SIZE[0], OUT_SIZE[1]))
         for i in range(IMG_SIZE[0]):
             for j in range(IMG_SIZE[1]):
@@ -154,6 +154,7 @@ for image_num in range(NUMBER):
 
         print "#",n
 
+    # (debug)
     #for i in range(FGRID_SIZE[0]):
         #for j in range(FGRID_SIZE[1]):
             #fullgrid[i][j] = 255 if fullgrid[i][j] == 1 else 0
@@ -161,8 +162,8 @@ for image_num in range(NUMBER):
     
     cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+OUT_NAME.split(".")[0]+"_"+str(image_num).zfill(6)+"."+OUT_NAME.split(".")[1], composite)
 
+    # dump del json
     with open(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+JSON_NAME.split(".")[0]+"_"+str(image_num).zfill(6)+"."+JSON_NAME.split(".")[1], "w") as out:
         json.dump(jsonList, out)
 
-    #profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
 genCoco(DIR_OUT+NAME+"/")

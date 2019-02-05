@@ -3,10 +3,11 @@ import numpy as np
 import os
 import configparser
 
-#carica da config.ini
+# carica da config.ini
 config = configparser.ConfigParser()
 config.read("config.ini")
 
+# processa mask
 src1 = config["SETTINGS"]["DIR_OMASK"]
 dst1 = config["SETTINGS"]["DIR_MASK"]
 list1 = os.listdir(src1)
@@ -22,6 +23,8 @@ for elem in list1:
 src2 = config["SETTINGS"]["DIR_OPROF"]
 dst2 = config["SETTINGS"]["DIR_PROF"]
 list2 = os.listdir(src2)
+
+# processa profili
 
 for elem in list2:
     img = cv2.cvtColor(cv2.imread(src2+elem), cv2.COLOR_BGR2GRAY)
