@@ -1,34 +1,37 @@
-import unicodedata
 import datetime
-import cv2
 import os
-import fnmatch
-import glob
-from natsort import natsorted
-import re
-from PIL import Image
 import json
 import numpy as np
+import configparser
+from PIL import Image
 from pycococreatortools import pycococreatortools
 
-def getCategories(DIR_MASK):
+#carica da config.ini
+config = configparser.ConfigParser()
+config.read("config.ini")
+COCO_NAME = config["SETTINGS"]["COCO_NAME"]
+OUT_NAME = config["SETTINGS"]["OUT_NAME"]
+JSON_NAME = config["SETTINGS"]["JSON_NAME"]
+DIR_MASK = config["SETTINGS"]["DIR_MASK"]
+
+def getCategories():
     catList = []
-    id = 0
+    catId = 0
     for image in os.listdir(DIR_MASK):
         #print image
         catList.append(
             {
                 "supercategory" : "shape",
-                "id" : id,
+                "id" : catId,
                 "name" : image.split(".")[0]
             }
         )
-        id += 1
+        catId += 1
     #print catList
     return catList
 
 
-def genCoco(DIR, COCO_NAME, OUT_NAME, JSON_NAME, DIR_MASK):
+def genCoco(DIR):
     coco_output ={
         "info": {
             "description": DIR,
@@ -53,7 +56,7 @@ def genCoco(DIR, COCO_NAME, OUT_NAME, JSON_NAME, DIR_MASK):
     subdirList = []
     subdirList = os.listdir(DIR)
 
-    catList = getCategories(DIR_MASK)
+    catList = getCategories()
     coco_output["categories"].append(catList)
 
     compositeId = 0

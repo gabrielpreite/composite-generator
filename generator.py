@@ -18,7 +18,7 @@ config.read("config.ini")
 CELLSIZE = int(config["SETTINGS"]["CELLSIZE"])
 OUT_SIZE = [int(config["SETTINGS"]["OUT_SIZEY"]), int(config["SETTINGS"]["OUT_SIZEX"])]
 OUT_NAME = config["SETTINGS"]["OUT_NAME"]
-MODE = int(config["SETTINGS"]["MODE"])
+MOD = int(config["SETTINGS"]["MOD"])
 N = int(config["SETTINGS"]["N"])
 DIR_MASK = config["SETTINGS"]["DIR_MASK"]
 DIR_PROF = config["SETTINGS"]["DIR_PROF"]
@@ -63,7 +63,7 @@ for image_num in range(NUMBER):
 
         mask = cv2.cvtColor(cv2.imread(DIR_MASK+path), cv2.COLOR_BGR2GRAY)
         profile = cv2.cvtColor(cv2.imread(DIR_PROF+path), cv2.COLOR_BGR2GRAY)
-        mask, profile, grid = randomize(mask, profile, CELLSIZE, MODE, THR)
+        mask, profile, grid = randomize(mask, profile)
 
         IMG_SIZE = [np.size(mask, 0), np.size(mask, 1)]
         GRID_SIZE = [np.size(grid, 0), np.size(grid, 1)]
@@ -165,4 +165,4 @@ for image_num in range(NUMBER):
         json.dump(jsonList, out)
 
     #profiles2Coco(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/", OUT_NAME)
-genCoco((DIR_OUT+NAME+"/"), COCO_NAME, OUT_NAME, JSON_NAME, DIR_MASK)
+genCoco(DIR_OUT+NAME+"/")

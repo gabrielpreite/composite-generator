@@ -1,7 +1,13 @@
-import cv2
 import numpy as np
+import configparser
 
-def genGrid(img, CELLSIZE):
+#carica da config.ini
+config = configparser.ConfigParser()
+config.read("config.ini")
+
+CELLSIZE = config["SETTINGS"]["CELLSIZE"]
+
+def genGrid(img):
     ROWS = img.shape[0] / CELLSIZE
     COLUMNS = img.shape[1] / CELLSIZE
 
@@ -15,16 +21,4 @@ def genGrid(img, CELLSIZE):
                     maxval = max(maxval, img[i*CELLSIZE+x][j*CELLSIZE+y])
             if maxval > 0:
                 grid[i][j] = 255
-            
-    #for i in range(ROWS):
-        #print grid[i]
-
-    #for i in range(ROWS-1):
-        #for j in range(COLUMNS-1):
-            #if grid[i][j] == 1:
-                #for x in range(-1, 2):
-                    #for y in range(-1, 2):
-                        #grid[i+x][j+y] = -1 if grid[i+x][j+y] == 0 else grid[i+x][j+y]
-    #for i in range(ROWS):
-        #print grid[i]
     return grid
