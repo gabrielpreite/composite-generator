@@ -39,7 +39,7 @@ if __name__=='__main__':
                 a = np.array(pnt, np.int32)
                 at = a.reshape((-1,1,2))
                 #print at
-                cv2.polylines(image_cv2,at,False,(255,0,255),4)
+                cv2.polylines(image_cv2,[at],False,(255,0,255),4)
           
             cv2.rectangle(image_cv2, (s[0], s[1]), (s[0]+s[2], s[1]+s[3]), (0,255,255), 8)
             #cv2.imshow('hey', image_cv2)

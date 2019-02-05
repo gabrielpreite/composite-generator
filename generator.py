@@ -152,7 +152,7 @@ for image_num in range(NUMBER):
         count[path] += 1
         cv2.imwrite(DIR_OUT+NAME+"/"+str(image_num).zfill(6)+"/"+path.split(".")[0]+"_"+str(count[path]).zfill(6)+".png", tmp)
 
-        print "#"+image_num+"-"+n
+        print "#"+str(image_num)+"-"+str(n)
 
     # (debug)
     #for i in range(FGRID_SIZE[0]):
