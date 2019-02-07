@@ -61,7 +61,12 @@ for image_num in range(NUMBER):
 
     for n in range(N):
         #seleziona un profilo random
-        path = lista[random.randint(0, len(lista)-1)]
+        #path = lista[random.randint(0, len(lista)-1)]
+
+        #seleziona il profilo in ordine alfabetico
+        lista.sort()
+        path = lista[n%len(lista)]
+        print path
 
         mask = cv2.cvtColor(cv2.imread(DIR_MASK+path), cv2.COLOR_BGR2GRAY)
         profile = cv2.cvtColor(cv2.imread(DIR_PROF+path), cv2.COLOR_BGR2GRAY)
