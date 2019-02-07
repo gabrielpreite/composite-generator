@@ -58,7 +58,8 @@ def genCoco(DIR):
     subdirList = os.listdir(DIR)
 
     catList = getCategories()
-    coco_output["categories"].append(catList)
+    for category in catList:
+        coco_output["categories"].append(category)
 
     compositeId = 0
     annotationId = 0

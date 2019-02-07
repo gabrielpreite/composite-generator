@@ -11,16 +11,39 @@ config.read("config.ini")
 CELLSIZE = int(config["SETTINGS"]["CELLSIZE"])
 MOD = int(config["SETTINGS"]["MOD"])
 THR = int(config["SETTINGS"]["THR"])
+AFFINE = int(config["SETTINGS"]["AFFINE"])
 
 def randomize(img1, img2):
     #Numero di colonne e righe
-    cols = img1.shape[0]
-    rows = img1.shape[1]
+    cols = img1.shape[1]
+    rows = img1.shape[0]
 
     degree = 0
     #Rapporto dimensioni
     scale = 1
-    
+
+    if AFFINE != 0:
+        pts1 = np.float32(
+            [
+                [AFFINE, AFFINE],
+                [cols - AFFINE, AFFINE],
+                [AFFINE, rows - AFFINE]
+            ]
+        )
+
+        pts2 = np.float32(
+            [
+                [AFFINE + random.randint(-AFFINE, AFFINE), AFFINE + random.randint(-AFFINE, AFFINE)],
+                [cols - AFFINE + random.randint(-AFFINE, AFFINE), AFFINE + random.randint(-AFFINE, AFFINE)],
+                [AFFINE + random.randint(-AFFINE, AFFINE), rows - AFFINE + random.randint(-AFFINE, AFFINE)]
+            ]
+        )
+
+        matrix = cv2.getAffineTransform(pts1, pts2)
+
+        img1 = cv2.warpAffine(img1, matrix, (cols, rows))
+        img2 = cv2.warpAffine(img2, matrix, (cols, rows))
+
     dst1 = img1
     dst2 = img2
 
